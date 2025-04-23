@@ -1,0 +1,20 @@
+import { test, expect } from "@playwright/test";
+import { LoginPage } from "../pageobjects/loginPage";
+import { IssuePage } from "../pageobjects/IssuePage";
+test("Add filter to the filter section", async ({ page }) => {
+  const login = new LoginPage(page);
+  const issuePage = new IssuePage(page);
+  await login.userLogin();
+  await issuePage.goToIssuePage();
+  await expect(await issuePage.isCheckboxChecked()).toBe(true);
+  await expect(await issuePage.isFilterStatusOpen()).toBe(true);
+  await issuePage.clickDropDownMenu();
+  await expect(await issuePage.isDropdownVisible()).toBe(true);
+  const optionsCount = await issuePage.checkDropdownHasOptions();
+  await expect(optionsCount).toBeGreaterThan(5);
+  await issuePage.clickDropDownMenuOption();
+  await expect(await issuePage.trackerFilterLabel).toBeVisible();
+  await expect(await issuePage.isFilterStatusOpen()).toBe(true);
+  await issuePage.clickClearButton();
+  await expect(await issuePage.trackerFilterLabel).not.toBeVisible();
+});
